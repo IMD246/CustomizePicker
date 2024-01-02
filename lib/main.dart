@@ -93,7 +93,14 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           PickerHelper.pickAssets(
-              requestType: RequestType.all, context: context);
+            requestType: RequestType.all,
+            selectedAssetlist: selectedAssetList,
+            context: context,
+          ).then((value) {
+            setState(() {
+              if (value != null) selectedAssetList = value;
+            });
+          });
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
