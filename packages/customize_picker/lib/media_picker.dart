@@ -1,3 +1,4 @@
+import 'package:customize_picker/color_theme.dart';
 import 'package:customize_picker/localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +120,11 @@ class _MediaPickerState extends State<MediaPicker> {
             height: 2,
             color: Theme.of(context).dividerColor,
           ),
-          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+          ),
+          dropdownColor: ColorTheme.colorWhite(context),
           iconEnabledColor: Theme.of(context).primaryColor,
           onChanged: (value) => _onChangedAlbum(value),
           items: albumList.map<DropdownMenuItem<AssetPathEntity>>(
@@ -132,7 +137,7 @@ class _MediaPickerState extends State<MediaPicker> {
                       album.name,
                       style: TextStyle(
                         fontSize: 18,
-                        color: Theme.of(context).dividerColor,
+                        color: ColorTheme.colorBlack(context),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -144,7 +149,7 @@ class _MediaPickerState extends State<MediaPicker> {
                           "(${snapshot.data})",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Theme.of(context).dividerColor,
+                            color: ColorTheme.colorBlack(context),
                           ),
                         );
                       },
