@@ -117,9 +117,9 @@ class _MediaPickerState extends State<MediaPicker> {
           isExpanded: false,
           underline: Container(
             height: 2,
-            color: Colors.black12,
+            color: Theme.of(context).dividerColor,
           ),
-          dropdownColor: Colors.white,
+          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
           iconEnabledColor: Theme.of(context).primaryColor,
           onChanged: (value) => _onChangedAlbum(value),
           items: albumList.map<DropdownMenuItem<AssetPathEntity>>(
@@ -132,7 +132,7 @@ class _MediaPickerState extends State<MediaPicker> {
                       album.name,
                       style: TextStyle(
                         fontSize: 18,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).dividerColor,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -144,7 +144,7 @@ class _MediaPickerState extends State<MediaPicker> {
                           "(${snapshot.data})",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).dividerColor,
                           ),
                         );
                       },
