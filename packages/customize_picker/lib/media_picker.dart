@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 
 import 'media_services.dart';
 
@@ -184,29 +185,27 @@ class _MediaPickerState extends State<MediaPicker> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : SafeArea(
-              child: GridView.builder(
-                controller: controller,
-                physics: const BouncingScrollPhysics(),
-                itemCount: assetList.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                ),
-                itemBuilder: (context, index) {
-                  AssetEntity assetEntity = assetList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      _selectAsset(assetEntity);
-                    },
-                    child: AbsorbPointer(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: _assetWidget(assetEntity),
-                      ),
-                    ),
-                  );
-                },
+          : GridView.builder(
+              controller: controller,
+              physics: const BouncingScrollPhysics(),
+              itemCount: assetList.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
               ),
+              itemBuilder: (context, index) {
+                AssetEntity assetEntity = assetList[index];
+                return GestureDetector(
+                  onTap: () {
+                    _selectAsset(assetEntity);
+                  },
+                  child: AbsorbPointer(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: _assetWidget(assetEntity),
+                    ),
+                  ),
+                );
+              },
             ),
     );
   }

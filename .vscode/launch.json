@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CustomizePicker",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "CustomizePicker (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "CustomizePicker (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "customize_picker",
+            "cwd": "packages\\customize_picker",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "customize_picker (profile mode)",
+            "cwd": "packages\\customize_picker",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "customize_picker (release mode)",
+            "cwd": "packages\\customize_picker",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

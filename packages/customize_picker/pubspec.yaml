@@ -1,6 +1,6 @@
 name: customize_picker
 description: A new Flutter package project.
-version: 0.0.3
+version: 0.0.4
 homepage:
 
 environment:
@@ -10,7 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  photo_manager: ^2.8.1
+  photo_manager: ^3.0.0-dev.2
+  photo_manager_image_provider: ^1.1.0
 
 dev_dependencies:
   flutter_test:
