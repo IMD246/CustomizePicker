@@ -64,32 +64,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: GridView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: selectedAssetList.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          itemBuilder: (context, index) {
-            AssetEntity assetEntity = selectedAssetList[index];
-            return Padding(
-              padding: const EdgeInsets.all(2),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: AssetEntityImage(
-                      assetEntity,
-                      isOriginal: false,
-                      thumbnailSize: const ThumbnailSize.square(1000),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+      body: GridView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: selectedAssetList.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
         ),
+        itemBuilder: (context, index) {
+          AssetEntity assetEntity = selectedAssetList[index];
+          return Padding(
+            padding: const EdgeInsets.all(2),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: AssetEntityImage(
+                    assetEntity,
+                    isOriginal: false,
+                    thumbnailSize: const ThumbnailSize.square(1000),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
