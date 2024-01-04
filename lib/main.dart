@@ -1,7 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:customize_picker/customize_picker.dart' show PickerHelper;
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,11 +78,28 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: AssetEntityImage(
-                    assetEntity,
-                    isOriginal: false,
-                    thumbnailSize: const ThumbnailSize.square(1000),
-                    fit: BoxFit.cover,
+                  child: StreamBuilder<Uint8List?>(
+                    initialData: null,
+                    stream: assetEntity
+                        .thumbnailDataWithSize(
+                          const ThumbnailSize(200, 200),
+                          quality: 60,
+                        )
+                        .asStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return SizedBox(
+                          child: Image.memory(
+                            snapshot.data!,
+                            key: ValueKey(assetEntity.id),
+                            fit: BoxFit.cover,
+                            cacheWidth: 200,
+                            cacheHeight: 200,
+                          ),
+                        );
+                      }
+                      return Container();
+                    },
                   ),
                 ),
               ],

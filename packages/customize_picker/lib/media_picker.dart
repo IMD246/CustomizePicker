@@ -1,11 +1,11 @@
 import 'package:customize_picker/color_theme.dart';
 import 'package:customize_picker/localization.dart';
+import 'package:customize_picker/media_picker_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
-
+import 'package:provider/provider.dart';
 import 'media_services.dart';
 
 class MediaPicker extends StatefulWidget {
@@ -28,13 +28,12 @@ class MediaPicker extends StatefulWidget {
 class _MediaPickerState extends State<MediaPicker> {
   AssetPathEntity? selectedAlbum;
   List<AssetPathEntity> albumList = [];
-  List<AssetEntity> selectedAssetlist = [];
   List<AssetEntity> assetList = [];
   ScrollController controller = ScrollController();
   int currentCount = 0;
   bool loadMoreValue = false;
   int totalAssets = 0;
-
+  MediaPickerModel mediaPickerModel = MediaPickerModel();
   void _onLoadMore() {
     if (loadMoreValue) return;
     loadMoreValue = true;
@@ -93,7 +92,7 @@ class _MediaPickerState extends State<MediaPicker> {
     if (widget.selectedAssetlist != null &&
         widget.selectedAssetlist!.isNotEmpty) {
       setState(() {
-        selectedAssetlist.addAll(widget.selectedAssetlist!);
+        mediaPickerModel.selectedAssetlist.addAll(widget.selectedAssetlist!);
       });
     }
     controller.addListener(_scrollListener);
@@ -109,33 +108,34 @@ class _MediaPickerState extends State<MediaPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        title: DropdownButton<AssetPathEntity>(
-          value: selectedAlbum,
-          isExpanded: false,
-          underline: Container(
-            height: 2,
-            color: Theme.of(context).dividerColor,
-          ),
-          style: const TextStyle(
-            fontSize: 18,
-            color: Colors.white,
-          ),
-          dropdownColor: ColorTheme.colorWhite(context),
-          iconEnabledColor: Theme.of(context).primaryColor,
-          onChanged: (value) => _onChangedAlbum(value),
-          items: albumList.map<DropdownMenuItem<AssetPathEntity>>(
-            (album) {
-              return DropdownMenuItem(
-                value: album,
-                child: Row(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: mediaPickerModel,
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          title: DropdownButton<AssetPathEntity>(
+            value: selectedAlbum,
+            isExpanded: false,
+            underline: Container(
+              height: 2,
+              color: Theme.of(context).dividerColor,
+            ),
+            focusColor: ColorTheme.colorBlack(context),
+            dropdownColor: ColorTheme.colorBlack(context),
+            iconEnabledColor: ColorTheme.colorBlack(context),
+            onChanged: (value) => _onChangedAlbum(value),
+            selectedItemBuilder: (BuildContext context) {
+              return albumList.map<Widget>((AssetPathEntity item) {
+                return Row(
                   children: [
                     Text(
-                      album.name,
+                      item.name,
                       style: TextStyle(
                         fontSize: 18,
                         color: ColorTheme.colorBlack(context),
@@ -144,7 +144,7 @@ class _MediaPickerState extends State<MediaPicker> {
                     const SizedBox(width: 4),
                     FutureBuilder(
                       initialData: 0,
-                      future: album.assetCountAsync,
+                      future: item.assetCountAsync,
                       builder: (context, snapshot) {
                         return Text(
                           "(${snapshot.data})",
@@ -156,57 +156,107 @@ class _MediaPickerState extends State<MediaPicker> {
                       },
                     ),
                   ],
-                ),
-              );
+                );
+              }).toList();
             },
-          ).toList(),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop(selectedAssetlist);
-            },
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Text(
-                  "${Localization.getContent(key: "select")} (${selectedAssetlist.length})",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-      body: assetList.isEmpty
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : GridView.builder(
-              controller: controller,
-              physics: const BouncingScrollPhysics(),
-              itemCount: assetList.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-              ),
-              itemBuilder: (context, index) {
-                AssetEntity assetEntity = assetList[index];
-                return GestureDetector(
-                  onTap: () {
-                    _selectAsset(assetEntity);
-                  },
-                  child: AbsorbPointer(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: _assetWidget(assetEntity),
-                    ),
+            items: albumList.map<DropdownMenuItem<AssetPathEntity>>(
+              (album) {
+                return DropdownMenuItem(
+                  value: album,
+                  child: Row(
+                    children: [
+                      Text(
+                        album.name,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: ColorTheme.colorWhite(context),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      FutureBuilder(
+                        initialData: 0,
+                        future: album.assetCountAsync,
+                        builder: (context, snapshot) {
+                          return Text(
+                            "(${snapshot.data})",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: ColorTheme.colorWhite(context),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 );
               },
-            ),
+            ).toList(),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop(mediaPickerModel.selectedAssetlist);
+              },
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Selector<MediaPickerModel, int>(
+                    shouldRebuild: (previous, next) => previous != next,
+                    selector: (p0, p1) {
+                      return p1.selectedAssetlist.length;
+                    },
+                    builder: (context, totalCount, child) {
+                      return Text(
+                        "${Localization.getContent(key: "select")} ($totalCount)",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+        body: assetList.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : GridView.builder(
+                controller: controller,
+                physics: const BouncingScrollPhysics(),
+                itemCount: assetList.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                ),
+                itemBuilder: (context, index) {
+                  AssetEntity assetEntity = assetList[index];
+                  return Selector<MediaPickerModel, bool>(
+                    selector: (p0, p1) {
+                      return p1.selectedAssetlist.contains(assetEntity);
+                    },
+                    shouldRebuild: (previous, next) => previous != next,
+                    builder: (context, value, child) {
+                      return GestureDetector(
+                        key: ValueKey(assetEntity),
+                        onTap: () {
+                          mediaPickerModel.selectAsset(
+                              assetEntity, widget.maxSelect);
+                        },
+                        child: AbsorbPointer(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: _assetWidget(assetEntity),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+      ),
     );
   }
 
@@ -217,19 +267,33 @@ class _MediaPickerState extends State<MediaPicker> {
           Positioned.fill(
             child: Padding(
               padding: EdgeInsets.all(
-                selectedAssetlist.contains(assetEntity) ? 15 : 0,
+                mediaPickerModel.selectedAssetlist.contains(assetEntity)
+                    ? 15
+                    : 0,
               ),
-              child: AssetEntityImage(
-                assetEntity,
-                isOriginal: false,
-                thumbnailSize: const ThumbnailSize.square(
-                  250,
+              child: FutureBuilder<Uint8List?>(
+                future: assetEntity.thumbnailDataWithSize(
+                  const ThumbnailSize(200, 200),
+                  quality: 60,
                 ),
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.error,
-                    color: Colors.red,
+                key: ValueKey(assetEntity),
+                initialData: null,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const SizedBox.shrink();
+                  return SizedBox(
+                    key: ValueKey(assetEntity),
+                    width: 200,
+                    height: 200,
+                    child: Image.memory(
+                      key: ValueKey(assetEntity),
+                      snapshot.data!,
+                      cacheHeight: 200,
+                      cacheWidth: 200,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error);
+                      },
+                    ),
                   );
                 },
               ),
@@ -255,7 +319,7 @@ class _MediaPickerState extends State<MediaPicker> {
               margin: const EdgeInsets.all(8.0),
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: selectedAssetlist.contains(assetEntity)
+                color: mediaPickerModel.selectedAssetlist.contains(assetEntity)
                     ? Colors.blue
                     : Colors.transparent,
                 shape: BoxShape.circle,
@@ -265,12 +329,13 @@ class _MediaPickerState extends State<MediaPicker> {
                 ),
               ),
               child: Text(
-                "${selectedAssetlist.indexOf(assetEntity) + 1}",
+                "${mediaPickerModel.selectedAssetlist.indexOf(assetEntity) + 1}",
                 style: TextStyle(
                   fontSize: 12,
-                  color: selectedAssetlist.contains(assetEntity)
-                      ? Colors.white
-                      : Colors.transparent,
+                  color:
+                      mediaPickerModel.selectedAssetlist.contains(assetEntity)
+                          ? Colors.white
+                          : Colors.transparent,
                 ),
               ),
             ),
@@ -278,22 +343,6 @@ class _MediaPickerState extends State<MediaPicker> {
         ),
       ],
     );
-  }
-
-  void _selectAsset(AssetEntity assetEntity) {
-    if (selectedAssetlist.any(
-      (element) => element.id == assetEntity.id,
-    )) {
-      setState(() {
-        selectedAssetlist.remove(assetEntity);
-      });
-    } else {
-      if (selectedAssetlist.length == widget.maxSelect &&
-          widget.maxSelect != null) return;
-      setState(() {
-        selectedAssetlist.add(assetEntity);
-      });
-    }
   }
 
   void _onChangedAlbum(AssetPathEntity? value) async {

@@ -55,7 +55,7 @@ packages:
       path: "packages/customize_picker"
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4"
   fake_async:
     dependency: transitive
     description:
@@ -114,6 +114,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -130,14 +138,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0-dev.5"
-  photo_manager_image_provider:
-    dependency: "direct main"
+  provider:
+    dependency: transitive
     description:
-      name: photo_manager_image_provider
-      sha256: "7fe226195204acfa8c7975b3de21ef3f07dc15914f852bff935a0d2ba463113a"
+      name: provider
+      sha256: "9a96a0a19b594dbc5bf0f1f27d2bc67d5f95957359b461cd9feb44ed6ae75096"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "6.1.1"
   sky_engine:
     dependency: transitive
     description: flutter
